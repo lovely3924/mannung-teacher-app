@@ -2,200 +2,197 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>만능 보육도우미</title>
+
 <style>
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f6efff;
-  padding:20px;
-  color:#2f2540;
+font-family:Arial,sans-serif;
+background:#f6efff;
+padding:20px;
+margin:0;
 }
 .card{
-  max-width:560px;
-  margin:auto;
-  background:white;
-  padding:22px;
-  border-radius:28px;
-  box-shadow:0 8px 22px rgba(0,0,0,.08);
+max-width:560px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:25px;
+box-shadow:0 0 15px rgba(0,0,0,.08);
 }
 h1{
-  text-align:center;
-  color:#8b5cf6;
-  font-size:34px;
+text-align:center;
+color:#8b5cf6;
 }
-p{
-  text-align:center;
-  color:#6b6178;
+.group{
+background:#f5ecff;
+padding:10px;
+border-radius:15px;
+margin:10px 0;
+font-weight:bold;
 }
 input,select,textarea,button{
-  width:100%;
-  box-sizing:border-box;
-  padding:14px;
-  margin:8px 0;
-  border-radius:14px;
-  border:1px solid #ddd;
-  font-size:16px;
+width:100%;
+padding:14px;
+margin:8px 0;
+border-radius:12px;
+border:1px solid #ddd;
+box-sizing:border-box;
 }
 textarea{
-  height:130px;
+height:120px;
 }
 button{
-  background:#8b5cf6;
-  color:white;
-  border:0;
-  font-size:18px;
-  font-weight:bold;
+background:#8b5cf6;
+color:white;
+border:0;
+font-size:16px;
+font-weight:bold;
 }
-.copy{
-  background:#6d4fd8;
-}
-.result{
-  white-space:pre-wrap;
-  background:#f2e8ff;
-  border-radius:18px;
-  padding:16px;
-  margin-top:15px;
-  line-height:1.7;
+#result{
+white-space:pre-wrap;
+background:#f3e7ff;
+padding:15px;
+border-radius:15px;
+margin-top:15px;
+line-height:1.7;
 }
 </style>
 </head>
 
 <body>
+
 <div class="card">
+
 <h1>💜 만능 보육도우미</h1>
-<p>아이 이름과 놀이 내용을 적으면 교사용 문장으로 바꿔줘요.</p>
 
-<input id="name" placeholder="아이 이름 예: 김한율">
-<input id="age" placeholder="나이/반 예: 만 1세, 0세반">
+<div class="group">👶 개별 기록</div>
 
-<select id="type">
-<option>관찰일지</option>
-<option>키즈노트</option>
-<option>보육일지</option>
-<option>놀이패널</option>
-<option>배움읽기 + 지원</option>
-<option>부모상담</option>
-<option>발달평가</option>
-<option>지도점검</option>
-<option>놀이계획</option>
+<select id="type" onchange="changeType()">
+<option>💌 키즈노트</option>
+<option>🔎 관찰일지</option>
+<option>🗣️ 부모상담</option>
+<option>📊 발달평가</option>
+<option>📘 보육일지</option>
+<option>🌱 배움읽기+지원</option>
+<option>🎨 놀이패널</option>
+<option>🧸 놀이계획</option>
 </select>
 
-<textarea id="play" placeholder="예: 자동차를 가지고 놀다가 교사에게 어어 하며 표현함"></textarea>
+<div id="childBox">
+<input id="name" placeholder="아이 이름">
+<input id="age" placeholder="나이/반">
+</div>
 
-<button onclick="make()">작성하기</button>
+<textarea id="play"
+placeholder="놀이 내용을 입력하세요"></textarea>
 
-<div id="result" class="result">작성 결과가 여기에 나와요 ✨</div>
+<button onclick="make()">
+작성하기
+</button>
 
-<button class="copy" onclick="copyText()">복사하기</button>
+<div id="result">
+작성 결과가 여기에 나와요 ✨
+</div>
+
+<button onclick="copyText()">
+복사하기
+</button>
+
 </div>
 
 <script>
+
+function changeType(){
+
+let t=document.getElementById("type").value;
+
+if(
+t==="📘 보육일지"||
+t==="🌱 배움읽기+지원"||
+t==="🎨 놀이패널"||
+t==="🧸 놀이계획"
+){
+document.getElementById(
+"childBox"
+).style.display="none";
+}
+else{
+document.getElementById(
+"childBox"
+).style.display="block";
+}
+
+}
+
 function make(){
-  let name=document.getElementById("name").value.trim() || "영아";
-  let age=document.getElementById("age").value.trim();
-  let type=document.getElementById("type").value;
-  let play=document.getElementById("play").value.trim() || "놀이 자료에 관심을 보이며 탐색하는 모습";
 
-  let text="";
+let t=
+document.getElementById(
+"type"
+).value;
 
-  if(type==="관찰일지"){
-    text=`[관찰일지]
+let n=
+document.getElementById(
+"name"
+).value||"영아";
 
-대상: ${name}${age ? " / " + age : ""}
+let p=
+document.getElementById(
+"play"
+).value;
 
-${name}는 ${play} 모습을 보였다. 처음에는 놀이 자료를 바라보며 관심을 보였고, 이후 손으로 만지거나 반복해서 시도하며 놀이에 참여하였다.
+let result="";
 
-놀이 과정에서 ${name}는 시선, 표정, 몸짓, 소리 등 자신만의 방식으로 흥미와 요구를 표현하였다. 교사의 부드러운 반응이 이어지자 안정적으로 탐색을 지속하며 놀이에 머무는 모습이 나타났다.
+if(
+t==="📘 보육일지"
+){
 
-교사는 ${name}의 관심을 따라가며 충분히 탐색할 수 있도록 시간을 제공하고, 놀이가 자연스럽게 확장될 수 있도록 관련 자료와 언어적 상호작용을 지원할 예정이다.`;
-  }
+result=
+`[보육일지]
 
-  else if(type==="키즈노트"){
-    text=`안녕하세요.
+영아들은 ${p} 놀이에 관심을 보이며 반복적으로 탐색하는 모습을 보였다.
 
-오늘 ${name}는 ${play} 모습을 보이며 즐겁게 놀이하였습니다. 관심 있는 자료를 스스로 바라보고 손으로 탐색하며 놀이에 집중하는 모습이 참 예뻤습니다.
+교사는 영아의 관심을 따라가며 놀이가 자연스럽게 이어질 수 있도록 자료를 제공하고 상호작용하였다.
 
-교사는 ${name}의 관심을 따라가며 “이게 궁금했구나”, “한 번 더 해볼까?” 하고 따뜻하게 반응해 주었고, ${name}도 안정적인 모습으로 놀이를 이어갔습니다.
+다음 놀이에서는 오늘 나타난 관심을 바탕으로 관련 놀이를 확장해 지원할 예정이다.`;
 
-가정에서도 오늘 보인 관심을 함께 이야기해 주시면 좋겠습니다.`;
-  }
+}
 
-  else if(type==="보육일지"){
-    text=`[보육일지]
+else{
 
-${name}는 ${play} 놀이에 관심을 보이며 하루 일과 속에서 자연스럽게 탐색을 이어갔다. 놀이 자료를 바라보고 손으로 만져보며 자신의 흥미를 표현하였고, 반복적인 시도를 통해 놀이의 즐거움을 경험하였다.
+result=
+`[${t}]
 
-교사는 영아의 관심이 머무는 지점을 관찰하고, 필요한 자료를 가까이 제공하며 놀이가 확장될 수 있도록 지원하였다.
+${n}는 ${p} 과정에서 관심을 보이며 놀이를 이어가는 모습이 나타났다.
 
-다음 놀이에서는 오늘 나타난 관심을 바탕으로 관련 감각 자료와 역할놀이 자료를 함께 제시할 예정이다.`;
-  }
+교사는 ${n}의 관심을 따라가며 적절한 상호작용을 지원하였다.`;
 
-  else if(type==="놀이패널"){
-    text=`[놀이이야기 패널]
+}
 
-📸 사진 장면
-${name}는 ${play}
+document.getElementById(
+"result"
+).innerText=result;
 
-👀 영아의 관심
-익숙한 자료를 바라보며 관심을 보이고, 손으로 만지거나 반복해서 탐색하려는 모습을 보였다.
-
-💬 놀이 흐름
-처음에는 조심스럽게 살펴보다가 교사의 반응이 이어지자 놀이에 머무르며 탐색을 이어갔다.
-
-🌱 다음 지원
-오늘 보인 관심을 바탕으로 관련 사진, 역할 소품, 감각 자료를 추가 제공하여 놀이가 확장되도록 지원할 예정이다.`;
-  }
-
-  else if(type==="배움읽기 + 지원"){
-    text=`[배움읽기]
-
-${name}는 ${play} 과정을 통해 주변 사물에 관심을 보이고, 시선과 몸짓으로 자신의 흥미를 표현하였다. 반복해서 바라보고 만져보는 모습에서 탐색의 즐거움과 안정적인 놀이 참여가 나타났다.
-
-[지원]
-
-교사는 ${name}의 관심을 따라가며 충분히 탐색할 수 있도록 기다려 주고, 짧고 따뜻한 언어로 반응하였다. 이후 관련 자료를 추가 제공하여 놀이가 자연스럽게 이어질 수 있도록 지원할 예정이다.`;
-  }
-
-  else if(type==="부모상담"){
-    text=`[부모상담]
-
-${name}는 원에서 ${play} 모습을 보이며 안정적으로 놀이에 참여하고 있습니다. 관심 있는 자료를 스스로 선택하고 반복해서 탐색하려는 모습이 있으며, 교사의 따뜻한 반응이 이어질 때 더욱 편안하게 놀이를 지속합니다.
-
-가정에서도 ${name}가 관심을 보이는 장면을 충분히 기다려 주시고, 짧은 말로 감정과 행동을 읽어주시면 표현이 더욱 자연스럽게 이어질 수 있습니다.`;
-  }
-
-  else if(type==="발달평가"){
-    text=`[발달평가]
-
-${name}는 ${play} 경험을 통해 주변 사물과 환경에 관심을 가지고 탐색하는 모습을 보인다. 관심 있는 놀이를 반복하며 자신의 방식으로 즐거움을 표현하고, 교사의 언어적 지원 속에서 놀이 경험을 확장해 간다.
-
-앞으로도 ${name}가 스스로 선택하고 시도할 수 있는 충분한 시간과 다양한 감각 자료를 제공하여 안정적인 발달을 지원하고자 한다.`;
-  }
-
-  else if(type==="지도점검"){
-    text=`[지도점검 기록]
-
-${name}의 놀이 기록은 영아의 관심, 놀이 흐름, 교사 지원, 다음 놀이 계획이 드러나도록 작성되었다. ${play} 모습을 바탕으로 영아 주도적 탐색이 이루어졌으며, 교사는 관찰을 통해 적절한 자료와 상호작용을 지원하였다.`;
-  }
-
-  else{
-    text=`[놀이계획]
-
-놀이 주제: ${play}
-
-${name}의 관심을 바탕으로 관련 자료를 제공하여 자유롭게 탐색할 수 있도록 한다. 영아가 스스로 선택하고 반복할 수 있는 시간을 충분히 마련하며, 교사는 영아의 말, 표정, 몸짓을 관찰하고 필요한 순간에 언어적 반응과 자료 확장을 지원한다.`;
-  }
-
-  document.getElementById("result").innerText=text;
 }
 
 function copyText(){
-  let text=document.getElementById("result").innerText;
-  navigator.clipboard.writeText(text);
-  alert("복사 완료 💜");
+
+navigator.clipboard.writeText(
+document.getElementById(
+"result"
+).innerText
+);
+
+alert(
+"복사 완료 💜"
+);
+
 }
+
+changeType();
+
 </script>
+
 </body>
 </html>
