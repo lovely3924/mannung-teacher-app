@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>만능 보육도우미</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f7f0ff;
+padding:20px;
+margin:0;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+h1{
+color:#8b5cf6;
+text-align:center;
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:15px;
+background:#8b5cf6;
+color:white;
+font-size:18px;
+}
+
+.result{
+margin-top:20px;
+padding:15px;
+background:#f3e8ff;
+border-radius:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>💜 만능 보육도우미</h1>
+
+<input type="text" id="name" placeholder="아이 이름">
+
+<select id="menu">
+<option>관찰일지</option>
+<option>보육일지</option>
+<option>배움읽기</option>
+<option>놀이이야기</option>
+</select>
+
+<textarea id="content" placeholder="놀이 내용을 입력하세요"></textarea>
+
+<button onclick="make()">작성하기</button>
+
+<div class="result" id="result"></div>
+</div>
+
+<script>
+function make(){
+
+let name=document.getElementById("name").value;
+let content=document.getElementById("content").value;
+
+document.getElementById("result").innerHTML=
+name+"의 놀이기록 ✨<br><br>"+content;
+
+}
+</script>
+
+</body>
+</html>
