@@ -12,25 +12,29 @@ background:#f6efff;
 padding:20px;
 margin:0;
 }
+
 .card{
-max-width:560px;
+max-width:580px;
 margin:auto;
 background:white;
-padding:20px;
+padding:25px;
 border-radius:25px;
-box-shadow:0 0 15px rgba(0,0,0,.08);
+box-shadow:0 0 15px rgba(0,0,0,.1);
 }
+
 h1{
 text-align:center;
 color:#8b5cf6;
 }
+
 .group{
-background:#f5ecff;
-padding:10px;
+background:#f4ebff;
+padding:12px;
 border-radius:15px;
-margin:10px 0;
 font-weight:bold;
+margin-bottom:15px;
 }
+
 input,select,textarea,button{
 width:100%;
 padding:14px;
@@ -38,25 +42,29 @@ margin:8px 0;
 border-radius:12px;
 border:1px solid #ddd;
 box-sizing:border-box;
+font-size:15px;
 }
+
 textarea{
 height:120px;
 }
+
 button{
 background:#8b5cf6;
 color:white;
 border:0;
-font-size:16px;
 font-weight:bold;
 }
+
 #result{
 white-space:pre-wrap;
-background:#f3e7ff;
+background:#f2e6ff;
 padding:15px;
 border-radius:15px;
 margin-top:15px;
-line-height:1.7;
+line-height:1.8;
 }
+
 </style>
 </head>
 
@@ -66,37 +74,55 @@ line-height:1.7;
 
 <h1>💜 만능 보육도우미</h1>
 
-<div class="group">👶 개별 기록</div>
+<div class="group">
+기록 종류 선택
+</div>
 
 <select id="type" onchange="changeType()">
+
 <option>💌 키즈노트</option>
 <option>🔎 관찰일지</option>
 <option>🗣️ 부모상담</option>
 <option>📊 발달평가</option>
+
 <option>📘 보육일지</option>
 <option>🌱 배움읽기+지원</option>
 <option>🎨 놀이패널</option>
 <option>🧸 놀이계획</option>
+
 </select>
 
 <div id="childBox">
-<input id="name" placeholder="아이 이름">
-<input id="age" placeholder="나이/반">
+
+<input
+id="name"
+placeholder="아이 이름">
+
+<input
+id="age"
+placeholder="나이/반">
+
 </div>
 
-<textarea id="play"
-placeholder="놀이 내용을 입력하세요"></textarea>
+<textarea
+id="play"
+placeholder="놀이 내용을 입력하세요">
+</textarea>
 
 <button onclick="make()">
 작성하기
 </button>
 
 <div id="result">
+
 작성 결과가 여기에 나와요 ✨
+
 </div>
 
 <button onclick="copyText()">
+
 복사하기
+
 </button>
 
 </div>
@@ -105,22 +131,51 @@ placeholder="놀이 내용을 입력하세요"></textarea>
 
 function changeType(){
 
-let t=document.getElementById("type").value;
+let t=
+document.getElementById(
+"type"
+).value;
 
 if(
-t==="📘 보육일지"||
-t==="🌱 배움읽기+지원"||
-t==="🎨 놀이패널"||
-t==="🧸 놀이계획"
+
+t.includes(
+"보육일지"
+)
+
+||
+
+t.includes(
+"배움읽기"
+)
+
+||
+
+t.includes(
+"놀이패널"
+)
+
+||
+
+t.includes(
+"놀이계획"
+)
+
 ){
+
 document.getElementById(
 "childBox"
-).style.display="none";
+).style.display=
+"none";
+
 }
+
 else{
+
 document.getElementById(
 "childBox"
-).style.display="block";
+).style.display=
+"block";
+
 }
 
 }
@@ -135,7 +190,9 @@ document.getElementById(
 let n=
 document.getElementById(
 "name"
-).value||"영아";
+).value
+||
+"영아";
 
 let p=
 document.getElementById(
@@ -145,7 +202,9 @@ document.getElementById(
 let result="";
 
 if(
-t==="📘 보육일지"
+t.includes(
+"보육일지"
+)
 ){
 
 result=
@@ -153,7 +212,7 @@ result=
 
 영아들은 ${p} 놀이에 관심을 보이며 반복적으로 탐색하는 모습을 보였다.
 
-교사는 영아의 관심을 따라가며 놀이가 자연스럽게 이어질 수 있도록 자료를 제공하고 상호작용하였다.
+교사는 영아의 관심을 따라가며 놀이가 자연스럽게 이어질 수 있도록 상호작용하였다.
 
 다음 놀이에서는 오늘 나타난 관심을 바탕으로 관련 놀이를 확장해 지원할 예정이다.`;
 
@@ -179,9 +238,11 @@ document.getElementById(
 function copyText(){
 
 navigator.clipboard.writeText(
+
 document.getElementById(
 "result"
 ).innerText
+
 );
 
 alert(
