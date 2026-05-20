@@ -3,240 +3,314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>만능 보육도우미</title>
+<title>만능교사</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f7f0ff;padding:18px;color:#2f2540}
-.card{max-width:720px;margin:auto;background:white;padding:22px;border-radius:28px;box-shadow:0 0 16px rgba(0,0,0,.08)}
-h1{text-align:center;color:#8b5cf6}
-.sub{text-align:center;color:#6b6178;line-height:1.5}
-.section{background:#f3e8ff;padding:12px;border-radius:16px;font-weight:bold;margin:14px 0 10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.menu{padding:18px;border-radius:20px;border:2px solid #eee;background:#fbf8ff;text-align:center;font-weight:bold;cursor:pointer}
-.menu.active{border-color:#8b5cf6;background:#f1e8ff}
-.menu span{display:block;font-size:30px;margin-bottom:6px}
-input,textarea,button{width:100%;box-sizing:border-box;padding:14px;margin:8px 0;border-radius:14px;border:1px solid #ddd;font-size:15px}
-textarea{height:130px}
-button{background:#8b5cf6;color:white;border:0;font-weight:bold;font-size:16px;cursor:pointer}
-.copy{background:#6d4fd8}
-.result{white-space:pre-wrap;background:#f2e6ff;padding:15px;border-radius:16px;margin-top:15px;line-height:1.75}
-#childBox{display:none}
-#photoBox{display:none}
-#preview{display:none;width:100%;max-height:360px;object-fit:cover;border-radius:22px;margin-top:10px;border:4px solid #f1e8ff}
-.panelWrap{display:none;margin-top:18px;background:#fff8fd;border-radius:24px;padding:16px;border:2px solid #f1e8ff}
-.panelPhoto{width:100%;max-height:360px;object-fit:cover;border-radius:22px;margin-bottom:14px;background:#f4efff}
-.panelTitle{text-align:center;font-size:24px;color:#7b55e7;font-weight:bold;margin:8px 0 14px}
-.panelGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.panelCard{border-radius:20px;padding:14px;min-height:120px;line-height:1.55}
-.p1{background:#fff3cf}.p2{background:#eafff2}.p3{background:#ffeaf4}.p4{background:#eee8ff}
-.panelCard b{display:block;margin-bottom:6px;font-size:16px}
-.small{font-size:13px;color:#777;line-height:1.5}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f7f0ff;
+  color:#2f2540;
+  padding:18px;
+}
+.app{
+  max-width:720px;
+  margin:auto;
+  background:white;
+  border-radius:28px;
+  padding:22px;
+  box-shadow:0 0 16px rgba(0,0,0,.08);
+}
+h1{
+  text-align:center;
+  color:#8b5cf6;
+  margin-bottom:6px;
+}
+.sub{
+  text-align:center;
+  color:#6b6178;
+  margin-bottom:20px;
+}
+.section{
+  background:#f3e8ff;
+  padding:12px;
+  border-radius:16px;
+  font-weight:bold;
+  margin:16px 0 10px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.menu{
+  border:2px solid #eee;
+  background:#fbf8ff;
+  border-radius:20px;
+  padding:18px 10px;
+  text-align:center;
+  font-weight:bold;
+  cursor:pointer;
+}
+.menu.active{
+  border-color:#8b5cf6;
+  background:#f0e6ff;
+}
+.menu span{
+  display:block;
+  font-size:30px;
+  margin-bottom:6px;
+}
+input,textarea,button,select{
+  width:100%;
+  box-sizing:border-box;
+  padding:14px;
+  margin:8px 0;
+  border-radius:14px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+textarea{
+  height:150px;
+  line-height:1.5;
+}
+button{
+  background:#8b5cf6;
+  color:white;
+  border:0;
+  font-weight:bold;
+  font-size:16px;
+  cursor:pointer;
+}
+.copy{
+  background:#6d4fd8;
+}
+.result{
+  white-space:pre-wrap;
+  background:#f2e6ff;
+  padding:16px;
+  border-radius:18px;
+  margin-top:15px;
+  line-height:1.8;
+}
+.small{
+  font-size:13px;
+  color:#777;
+}
+.hidden{
+  display:none;
+}
+.checkline{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+}
+.checkline input{
+  width:auto;
+}
 </style>
 </head>
 
 <body>
-<div class="card">
-<h1>💜 만능 보육도우미</h1>
-<p class="sub">보육일지 · 관찰일지 · 발달평가 · 보육운영평가를 쉽고 빠르게 작성해요.</p>
+<div class="app">
+  <h1>💜 만능교사</h1>
+  <p class="sub">짧게 적고, 깊게 기록하기</p>
 
-<div class="section">🏠 메인 기록</div>
-<div class="grid">
-  <div class="menu active" onclick="pick('보육일지',this)"><span>📘</span>보육일지</div>
-  <div class="menu" onclick="pick('관찰일지',this)"><span>🔎</span>관찰일지</div>
-  <div class="menu" onclick="pick('발달평가',this)"><span>📊</span>발달평가</div>
-  <div class="menu" onclick="pick('보육운영평가',this)"><span>🏫</span>보육운영평가</div>
-</div>
-
-<div class="section">🧸 보조 기능</div>
-<div class="grid">
-  <div class="menu" onclick="pick('키즈노트',this)"><span>💌</span>키즈노트</div>
-  <div class="menu" onclick="pick('놀이패널',this)"><span>🎨</span>놀이패널</div>
-  <div class="menu" onclick="pick('놀이계획',this)"><span>🧸</span>놀이계획</div>
-</div>
-
-<div class="section">✍️ 입력하기</div>
-
-<div id="childBox">
-<input id="name" placeholder="아이 이름 예: 김한율">
-<input id="age" placeholder="나이/반 예: 만 1세, 0세반">
-</div>
-
-<input id="topic" placeholder="놀이 주제 예: 우리가족, 감정놀이, 자동차놀이">
-
-<textarea id="play" placeholder="놀이 내용을 적어주세요. 예: 자동차를 가지고 놀다가 교사에게 어어 하며 표현함"></textarea>
-
-<div id="photoBox">
-<div class="section">📸 놀이패널 사진</div>
-<input type="file" accept="image/*" id="photo" onchange="previewPhoto(event)">
-<img id="preview">
-<p class="small">사진은 놀이패널 화면에 바로 미리보기로 들어가요.</p>
-</div>
-
-<button onclick="make()">작성하기</button>
-
-<div id="result" class="result">작성 결과가 여기에 나와요 ✨</div>
-
-<div id="panelWrap" class="panelWrap">
-  <div class="panelTitle" id="panelTitle">놀이이야기</div>
-  <img id="panelPhoto" class="panelPhoto">
-  <div class="panelGrid">
-    <div class="panelCard p1"><b>👀 영아의 관심</b><div id="panelInterest"></div></div>
-    <div class="panelCard p2"><b>🎨 놀이 장면</b><div id="panelScene"></div></div>
-    <div class="panelCard p3"><b>🌱 배움읽기</b><div id="panelLearning"></div></div>
-    <div class="panelCard p4"><b>💜 교사 지원</b><div id="panelSupport"></div></div>
+  <div class="section">🏠 메인 기능</div>
+  <div class="grid">
+    <div class="menu active" onclick="pick('보육일지',this)"><span>📘</span>보육일지</div>
+    <div class="menu" onclick="pick('키즈노트',this)"><span>💌</span>키즈노트</div>
+    <div class="menu" onclick="pick('관찰평가',this)"><span>🔎</span>관찰평가</div>
+    <div class="menu" onclick="pick('보육과정 운영평가',this)"><span>🏫</span>보육과정 운영평가</div>
   </div>
-</div>
 
-<button class="copy" onclick="copyText()">복사하기</button>
+  <div class="section">🧸 보조 기능</div>
+  <div class="grid">
+    <div class="menu" onclick="pick('부모상담일지',this)"><span>👨‍👩‍👧</span>부모상담일지</div>
+    <div class="menu" onclick="pick('적응일지',this)"><span>🌱</span>적응일지</div>
+    <div class="menu" onclick="pick('놀이패널',this)"><span>🎨</span>놀이패널</div>
+    <div class="menu" onclick="pick('놀이계획',this)"><span>🧸</span>놀이계획 + 삐삑 추천✨</div>
+  </div>
+
+  <div class="section">✏️ 입력하기</div>
+
+  <div id="nameBox">
+    <input id="name" placeholder="아이 이름 (선택)">
+    <p class="small">※ 보육일지는 비우면 반 전체 기록, 입력하면 개인 중심 기록으로 작성돼요.</p>
+  </div>
+
+  <input id="topic" placeholder="놀이 주제 예: 봄꽃 놀이, 자동차 놀이, 감정놀이">
+
+  <textarea id="memo" placeholder="오늘 놀이·일상 메모를 짧게 적어주세요.
+예) 한율이 울면서 등원함. 자동차 좋아해서 제공하니 울음 줄고 놀이함."></textarea>
+
+  <div id="outdoorBox">
+    <label class="checkline">
+      <input type="checkbox" id="outdoorCheck" onchange="toggleOutdoor()">
+      🌳 바깥놀이 포함하기
+    </label>
+
+    <div id="outdoorDetail" class="hidden">
+      <select id="outdoorPlace">
+        <option>놀이터</option>
+        <option>산책</option>
+        <option>생태연못</option>
+        <option>마당</option>
+        <option>직접입력</option>
+      </select>
+      <input id="outdoorMemo" placeholder="바깥놀이 메모 예: 올챙이를 바라보며 가까이 다가감">
+      <label class="checkline">
+        <input type="checkbox" id="replaceCheck">
+        ☔ 대체놀이로 작성하기
+      </label>
+    </div>
+  </div>
+
+  <button onclick="make()">💜 작성하기</button>
+
+  <div id="result" class="result">작성 결과가 여기에 나와요 ✨</div>
+
+  <button class="copy" onclick="copyText()">복사하기</button>
 </div>
 
 <script>
 let selected="보육일지";
-let uploadedPhoto="";
 
 function pick(type,el){
-selected=type;
-document.querySelectorAll(".menu").forEach(m=>m.classList.remove("active"));
-el.classList.add("active");
+  selected=type;
+  document.querySelectorAll(".menu").forEach(m=>m.classList.remove("active"));
+  el.classList.add("active");
 
-if(type==="관찰일지"||type==="발달평가"||type==="키즈노트"){
-document.getElementById("childBox").style.display="block";
-}else{
-document.getElementById("childBox").style.display="none";
+  document.getElementById("outdoorBox").style.display =
+    type==="보육일지" ? "block" : "none";
+
+  document.getElementById("nameBox").style.display =
+    type==="보육과정 운영평가" || type==="놀이패널" || type==="놀이계획" ? "none" : "block";
 }
 
-if(type==="놀이패널"){
-document.getElementById("photoBox").style.display="block";
-}else{
-document.getElementById("photoBox").style.display="none";
-document.getElementById("panelWrap").style.display="none";
-}
+function toggleOutdoor(){
+  document.getElementById("outdoorDetail").classList.toggle(
+    "hidden",
+    !document.getElementById("outdoorCheck").checked
+  );
 }
 
-function previewPhoto(event){
-let file=event.target.files[0];
-if(!file)return;
-let reader=new FileReader();
-reader.onload=function(e){
-uploadedPhoto=e.target.result;
-document.getElementById("preview").src=uploadedPhoto;
-document.getElementById("preview").style.display="block";
-};
-reader.readAsDataURL(file);
+function subject(name){
+  return name ? name + "는" : "영아들은";
+}
+
+function possess(name){
+  return name ? name + "의" : "영아들의";
 }
 
 function make(){
-let name=document.getElementById("name").value||"영아";
-let age=document.getElementById("age").value;
-let topic=document.getElementById("topic").value||"오늘의 놀이";
-let play=document.getElementById("play").value||"놀이 자료에 관심을 보이며 탐색하는 모습";
-let result="";
+  let name=document.getElementById("name").value.trim();
+  let topic=document.getElementById("topic").value.trim() || "오늘의 놀이";
+  let memo=document.getElementById("memo").value.trim() || "놀이 자료에 관심을 보이며 탐색하는 모습";
+  let who=subject(name);
+  let whose=possess(name);
+  let result="";
 
-document.getElementById("panelWrap").style.display="none";
+  if(selected==="보육일지"){
+    result=`[보육일지]
 
-if(selected==="보육일지"){
-result=`[보육일지]
+1. 놀이가 왜 시작되었는지
+${topic}와 관련된 자료와 상황에 관심을 보이며 놀이가 자연스럽게 시작되었다. ${who} ${memo} 모습을 보이며 놀이에 관심을 나타냈다.
 
-오늘의 놀이 흐름
-영아들은 ${topic} 놀이에 관심을 보이며 ${play} 모습을 보였다. 놀이 자료를 바라보고 손으로 만져보며 자신의 흥미를 표현하였고, 반복적인 시도를 통해 놀이의 즐거움을 경험하였다.
+2. 놀이 흐름
+처음에는 놀이 자료를 바라보거나 손으로 만져보며 탐색을 시작하였고, 점차 반복적으로 시도하며 놀이에 머무르는 모습을 보였다. 놀이가 이어지는 과정에서 주변 친구의 놀이를 살펴보거나 교사의 반응에 따라 다시 놀이에 참여하는 모습도 나타났다.
 
-영아의 관심
-영아들은 놀이 자료의 움직임, 색, 모양, 감촉 등에 관심을 보였으며 또래의 놀이를 바라보거나 교사의 말에 반응하며 자연스럽게 상호작용하였다.
+3. 영아 관찰 + 교사 상호작용
+${who} ${memo} 과정에서 시선, 표정, 몸짓, 소리 등 자신만의 방식으로 흥미와 요구를 표현하였다. 교사는 ${whose} 관심이 머무는 지점을 살펴보고 놀이 상황을 짧은 언어로 표현해주며 상호작용하였다.
 
-배움읽기
-이번 놀이를 통해 영아들은 주변 사물과 상황에 관심을 가지고, 시선·몸짓·소리·표정 등 자신만의 방식으로 흥미와 요구를 표현하는 모습을 보였다. 반복해서 탐색하며 놀이에 머무는 과정에서 안정적인 놀이 참여와 탐색의 즐거움이 나타났다.
+4. 교사 지원 + 확장
+교사는 ${whose} 관심이 이어질 수 있도록 관련 자료를 가까이 제공하고, 반복적으로 탐색할 수 있도록 충분한 시간을 제공하였다. 이를 통해 영아가 안정적으로 놀이에 참여하며 즐겁게 활동을 이어가는 모습을 보였다.
 
-지원
-교사는 영아의 관심이 머무는 지점을 관찰하고, 필요한 자료를 가까이 제공하며 짧고 따뜻한 언어로 반응하였다. 영아가 스스로 선택하고 반복할 수 있도록 충분한 시간을 제공하며 놀이가 자연스럽게 확장되도록 지원하였다.
+5. 배움읽기 + 지원
+${who} 놀이를 통해 주변 사물과 상황에 관심을 가지고 자신의 방식으로 탐색하며 표현하는 경험을 하였다. 이는 영아가 놀이 속에서 의사소통, 사회관계, 자연탐구, 신체 움직임 등 다양한 경험을 통합적으로 이어가는 과정으로 볼 수 있다. 교사는 영아의 자발적인 시도와 반복 탐색이 이어질 수 있도록 자료와 상호작용을 지속적으로 지원하였다.
 
-다음 놀이 계획
-다음 놀이에서는 오늘 나타난 관심을 바탕으로 관련 감각 자료와 역할놀이 자료를 함께 제시하여 놀이가 이어질 수 있도록 지원할 예정이다.`;
-}
+6. 놀이 지원 계획
+다음 놀이에서는 오늘 나타난 관심을 바탕으로 ${topic}와 관련된 자료를 추가 제공하고, 영아가 스스로 선택하고 반복하며 놀이를 확장할 수 있도록 지원할 예정이다.`;
 
-else if(selected==="관찰일지"){
-result=`[관찰일지]
+    if(document.getElementById("outdoorCheck").checked){
+      let place=document.getElementById("outdoorPlace").value;
+      let outdoor=document.getElementById("outdoorMemo").value.trim() || "주변 환경을 살펴보며 관심을 보임";
+      let replace=document.getElementById("replaceCheck").checked;
 
-대상: ${name}${age ? " / " + age : ""}
+      result+=`
 
-${name}는 ${topic} 놀이 중 ${play} 모습을 보였다. 처음에는 놀이 자료를 바라보며 관심을 보였고, 이후 손으로 만지거나 반복해서 시도하며 놀이에 참여하였다.
+7. ${replace ? "대체놀이" : "바깥놀이"}
+${replace ? "바깥놀이가 어려운 상황을 고려하여 실내에서 관련 경험이 이어질 수 있도록 대체놀이를 제공하였다." : place+"에서 바깥놀이가 이루어졌으며, 영아들은 "+outdoor+" 모습을 보였다."}
 
-놀이 과정에서 ${name}는 시선, 표정, 몸짓, 소리 등 자신만의 방식으로 흥미와 요구를 표현하였다. 교사의 부드러운 반응이 이어지자 안정적으로 탐색을 지속하며 놀이에 머무는 모습이 나타났다.
+${replace ? "영아가 바깥에서 경험할 수 있는 자연물과 움직임에 대한 관심을 실내 놀이로 연결하여 관련 자료를 제공하였고, 영아들은 자신의 방식으로 탐색하며 즐겁게 놀이에 참여하는 모습을 보였다." : "교사는 영아가 주변 자연과 환경을 안전하게 탐색할 수 있도록 가까이에서 살피며 언어적 상호작용을 제공하였다."}`;
+    }
+  }
 
-교사는 ${name}의 관심을 따라가며 충분히 탐색할 수 있도록 시간을 제공하고, 놀이가 자연스럽게 확장될 수 있도록 관련 자료와 언어적 상호작용을 지원할 예정이다.`;
-}
+  else if(selected==="키즈노트"){
+    result=`안녕하세요.
 
-else if(selected==="발달평가"){
-result=`[발달평가]
+오늘 ${name||"우리 아이"}는 ${topic} 놀이 속에서 ${memo} 모습을 보였어요. 처음에는 주변을 살펴보며 관심을 보이다가 점차 놀이 자료를 만져보거나 반복해서 시도하며 즐겁게 참여했답니다.
 
-대상: ${name}${age ? " / " + age : ""}
+교사는 아이가 관심을 보이는 순간을 따라가며 따뜻한 말로 반응해주었고, 아이도 편안한 모습으로 놀이를 이어갔어요.
 
-${name}는 ${topic} 놀이 경험을 통해 주변 사물과 환경에 관심을 가지고 탐색하는 모습을 보인다. ${play} 과정에서 자신의 방식으로 흥미를 표현하고, 반복적인 시도를 통해 놀이의 즐거움을 경험한다.
+가정에서도 오늘 보인 관심을 함께 이야기해주시면 놀이 경험이 더욱 풍성하게 이어질 것 같습니다.`;
+  }
 
-교사의 언어적 지원과 안정적인 상호작용 속에서 놀이 경험을 확장해 가는 모습이 나타난다. 앞으로도 ${name}가 스스로 선택하고 시도할 수 있는 충분한 시간과 다양한 감각 자료를 제공하여 안정적인 발달을 지원하고자 한다.`;
-}
+  else if(selected==="관찰평가"){
+    result=`[관찰평가]
 
-else if(selected==="보육운영평가"){
-result=`[보육운영평가]
+${name||"영아"}는 ${topic}와 관련된 놀이와 일상 속에서 ${memo} 모습을 반복적으로 보였다. 관심 있는 자료를 바라보거나 손으로 만져보며 자신의 방식으로 탐색하였고, 교사와의 상호작용 속에서 놀이에 다시 참여하는 모습도 나타났다.
 
-월/주간 운영평가
-${topic} 놀이를 중심으로 영아들이 ${play} 모습을 보이며 놀이에 참여하였다. 영아의 흥미를 반영한 자료 제공을 통해 자발적인 탐색과 반복 놀이가 이루어졌다.
+이전보다 일과 흐름에 안정적으로 참여하는 시간이 늘어나고 있으며, 자신의 관심과 감정을 표정, 몸짓, 짧은 언어 등으로 표현하려는 모습을 보였다. 앞으로도 아이의 관심이 이어질 수 있도록 반복 경험과 정서적 지원을 제공하고자 한다.`;
+  }
 
-놀이평가
-영아들은 자신의 관심에 따라 자료를 선택하고 탐색하며 놀이를 이어갔다. 또래의 놀이를 바라보거나 교사의 반응에 응답하며 자연스럽게 상호작용하는 모습이 나타났다.
+  else if(selected==="보육과정 운영평가"){
+    result=`[보육과정 운영평가]
 
-환경구성 평가
-영아가 쉽게 접근할 수 있는 위치에 놀이 자료를 제공하여 스스로 선택하고 반복할 수 있도록 하였다. 자료의 수와 배치를 조정하며 영아의 흥미가 지속될 수 있도록 환경을 구성하였다.
+${topic}를 중심으로 영아들이 ${memo} 모습을 보이며 놀이에 참여하였다. 영아의 흥미를 반영한 자료 제공을 통해 자발적인 탐색과 반복 놀이가 이루어졌다.
 
-다음 운영 방향
-다음 주에는 오늘 나타난 관심을 바탕으로 관련 자료를 추가 제공하고, 영아의 표현과 상호작용이 확장될 수 있도록 놀이 환경을 조정할 예정이다.`;
-}
+놀이 과정에서 영아들은 자신의 관심에 따라 자료를 선택하고 탐색하였으며, 또래의 놀이를 바라보거나 교사의 반응에 응답하며 자연스럽게 상호작용하는 모습을 보였다.
 
-else if(selected==="키즈노트"){
-result=`안녕하세요.
+교사는 영아가 쉽게 접근할 수 있는 위치에 놀이 자료를 제공하고, 자료의 수와 배치를 조정하며 놀이가 이어질 수 있도록 환경을 구성하였다. 다음 운영에서는 오늘 나타난 관심을 바탕으로 관련 자료를 추가 제공하고, 영아의 표현과 상호작용이 확장될 수 있도록 지원할 예정이다.`;
+  }
 
-오늘 ${name}는 ${topic} 놀이 속에서 ${play} 모습을 보였어요. 처음에는 놀이 자료를 바라보며 관심을 보이다가 손으로 만져보거나 반복해서 시도하며 놀이에 즐겁게 참여했답니다.
+  else if(selected==="부모상담일지"){
+    result=`[부모상담일지]
 
-교사가 ${name}의 관심을 따라 “궁금했구나”, “한 번 더 해볼까?” 하고 따뜻하게 반응해 주자 안정적으로 놀이를 이어가는 모습이 보였어요.
+${name||"영아"}는 원에서 ${topic}와 관련하여 ${memo} 모습을 보이고 있다. 관심 있는 자료를 스스로 선택하거나 반복적으로 탐색하려는 모습이 있으며, 교사의 따뜻한 반응이 이어질 때 더욱 편안하게 놀이에 참여한다.
 
-가정에서도 오늘 ${name}가 보인 관심을 함께 이야기해 주시면 놀이 경험이 더욱 풍성하게 이어질 것 같습니다.`;
-}
+강점으로는 자신의 관심을 다양한 방식으로 표현하려는 모습이 있으며, 또래나 교사와의 상호작용 속에서 놀이 경험을 확장해가는 모습이 있다. 가정에서도 아이가 관심을 보이는 장면을 충분히 기다려주시고 짧은 말로 행동과 감정을 읽어주시면 표현이 더욱 자연스럽게 이어질 수 있다.`;
+  }
 
-else if(selected==="놀이패널"){
-result=`[놀이패널 문장]
+  else if(selected==="적응일지"){
+    result=`[적응일지]
 
-놀이 주제: ${topic}
+${name||"영아"}는 새로운 환경과 일과 속에서 ${memo} 모습을 보였다. 처음에는 주변을 살피거나 교사 가까이 머무르려는 모습이 있었으나, 익숙한 놀이와 교사의 안정적인 반응이 이어지자 점차 놀이에 참여하는 모습을 보였다.
 
-영아의 관심
-영아들은 ${topic} 놀이 중 ${play} 모습을 보이며 자료에 관심을 나타냈다.
+교사는 아이가 안정감을 느낄 수 있도록 가까이에서 반응해주고, 선호하는 놀이나 익숙한 자료를 제공하여 자연스럽게 일과에 참여할 수 있도록 지원하였다. 이후 아이는 놀이에 머무르며 교실 생활에 조금씩 적응해가는 모습을 보였다.`;
+  }
 
-놀이 장면
-놀이 자료를 바라보고 손으로 만져보며 자신의 흥미를 표현하였고, 반복적인 탐색을 통해 놀이에 머무는 모습이 나타났다.
+  else if(selected==="놀이패널"){
+    result=`[놀이패널]
 
-배움읽기
-이번 놀이를 통해 영아들은 주변 사물과 상황에 관심을 가지고 시선, 몸짓, 표정으로 자신의 흥미를 표현하였다.
+📸 놀이 장면
+${topic} 놀이 중 영아들은 ${memo}
 
-교사 지원
-교사는 영아의 관심을 따라가며 자료를 가까이 제공하고 짧고 따뜻한 언어로 반응하여 놀이가 이어질 수 있도록 지원하였다.`;
+👀 영아의 관심
+영아들은 놀이 자료를 바라보고 손으로 만져보며 관심을 표현하였다.
 
-document.getElementById("panelTitle").innerText=`${topic} 놀이이야기`;
-if(uploadedPhoto){
-document.getElementById("panelPhoto").src=uploadedPhoto;
-document.getElementById("panelPhoto").style.display="block";
-}else{
-document.getElementById("panelPhoto").removeAttribute("src");
-document.getElementById("panelPhoto").style.display="none";
-}
-document.getElementById("panelInterest").innerText=`영아들은 ${topic} 놀이에 관심을 보이며 ${play} 모습을 보였다.`;
-document.getElementById("panelScene").innerText=`놀이 자료를 바라보고 손으로 만져보며 반복적으로 탐색하였다.`;
-document.getElementById("panelLearning").innerText=`시선, 표정, 몸짓으로 자신의 흥미를 표현하며 안정적으로 놀이에 참여하였다.`;
-document.getElementById("panelSupport").innerText=`교사는 영아의 관심을 따라가며 자료를 가까이 제공하고 놀이가 확장되도록 지원하였다.`;
-document.getElementById("panelWrap").style.display="block";
-}
+🌱 배움읽기
+놀이를 통해 주변 사물과 상황에 관심을 가지고 자신의 방식으로 탐색하며 표현하는 경험을 하였다.
 
-else if(selected==="놀이계획"){
-result=`[놀이계획 + 삐삑추천✨]
+💜 교사 지원
+교사는 영아의 관심을 따라가며 자료를 가까이 제공하고 짧은 언어로 반응하며 놀이가 이어질 수 있도록 지원하였다.`;
+  }
+
+  else if(selected==="놀이계획"){
+    result=`[놀이계획 + 삐삑 추천✨]
 
 놀이 주제: ${topic}
-오늘 관찰된 관심: ${play}
+오늘 관찰된 관심: ${memo}
 
 내일 연계놀이
 1. ${topic} 관련 사진 자료를 보며 이야기 나누기
@@ -251,22 +325,18 @@ result=`[놀이계획 + 삐삑추천✨]
 - 영아가 안전하게 만질 수 있는 실물 자료
 
 교사 지원
-영아가 보인 관심을 먼저 관찰하고, “이게 궁금했구나”, “또 해보고 싶구나”처럼 짧고 따뜻한 언어로 반응한다. 놀이가 끊기지 않도록 자료를 가까이 제공하고, 영아의 시도와 반복을 충분히 기다려 준다.
+영아가 보인 관심을 먼저 관찰하고 짧고 따뜻한 언어로 반응한다. 놀이가 끊기지 않도록 자료를 가까이 제공하고, 영아의 시도와 반복을 충분히 기다려 준다.`;
+  }
 
-동화 추천
-- 가족 주제: 가족과 관련된 사진책, 엄마·아빠가 등장하는 생활동화
-- 감정 주제: 감정 색깔, 표정, 마음을 다루는 그림책
-- 자연물 주제: 산책, 나뭇잎, 꽃, 곤충이 나오는 그림책
-- 자동차 주제: 움직임, 빠르기, 길 찾기와 관련된 그림책`;
-}
-
-document.getElementById("result").innerText=result;
+  document.getElementById("result").innerText=result;
 }
 
 function copyText(){
-navigator.clipboard.writeText(document.getElementById("result").innerText);
-alert("복사 완료 💜");
+  navigator.clipboard.writeText(document.getElementById("result").innerText);
+  alert("복사 완료 💜");
 }
+
+pick("보육일지",document.querySelector(".menu"));
 </script>
 </body>
 </html>
