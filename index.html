@@ -1,342 +1,285 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>만능교사</title>
-<style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f7f0ff;
-  color:#2f2540;
-  padding:18px;
-}
-.app{
-  max-width:720px;
-  margin:auto;
-  background:white;
-  border-radius:28px;
-  padding:22px;
-  box-shadow:0 0 16px rgba(0,0,0,.08);
-}
-h1{
-  text-align:center;
-  color:#8b5cf6;
-  margin-bottom:6px;
-}
-.sub{
-  text-align:center;
-  color:#6b6178;
-  margin-bottom:20px;
-}
-.section{
-  background:#f3e8ff;
-  padding:12px;
-  border-radius:16px;
-  font-weight:bold;
-  margin:16px 0 10px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.menu{
-  border:2px solid #eee;
-  background:#fbf8ff;
-  border-radius:20px;
-  padding:18px 10px;
-  text-align:center;
-  font-weight:bold;
-  cursor:pointer;
-}
-.menu.active{
-  border-color:#8b5cf6;
-  background:#f0e6ff;
-}
-.menu span{
-  display:block;
-  font-size:30px;
-  margin-bottom:6px;
-}
-input,textarea,button,select{
-  width:100%;
-  box-sizing:border-box;
-  padding:14px;
-  margin:8px 0;
-  border-radius:14px;
-  border:1px solid #ddd;
-  font-size:15px;
-}
-textarea{
-  height:150px;
-  line-height:1.5;
-}
-button{
-  background:#8b5cf6;
-  color:white;
-  border:0;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-}
-.copy{
-  background:#6d4fd8;
-}
-.result{
-  white-space:pre-wrap;
-  background:#f2e6ff;
-  padding:16px;
-  border-radius:18px;
-  margin-top:15px;
-  line-height:1.8;
-}
-.small{
-  font-size:13px;
-  color:#777;
-}
-.hidden{
-  display:none;
-}
-.checkline{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-top:8px;
-}
-.checkline input{
-  width:auto;
-}
-</style>
-</head>
+import React, { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  BookOpen,
+  Heart,
+  ClipboardCheck,
+  Search,
+  Users,
+  BarChart3,
+  Sparkles,
+  Baby,
+  Wand2,
+  Copy,
+  Check,
+  Home,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-<body>
-<div class="app">
-  <h1>💜 만능교사</h1>
-  <p class="sub">짧게 적고, 깊게 기록하기</p>
+const MENU = [
+  { id: "daily", title: "보육일지", desc: "한 줄 입력으로 놀이 흐름 일지 작성", icon: BookOpen, color: "bg-purple-100", text: "text-purple-700" },
+  { id: "note", title: "키즈노트", desc: "부모님께 보내는 개별 알림장", icon: Heart, color: "bg-pink-100", text: "text-pink-700" },
+  { id: "operation", title: "보육운영평가", desc: "놀이환경·놀이시간·안전교육 중심", icon: ClipboardCheck, color: "bg-emerald-100", text: "text-emerald-700" },
+  { id: "observe", title: "관찰일지", desc: "관찰·해석·지원·다음 지원", icon: Search, color: "bg-amber-100", text: "text-amber-700" },
+  { id: "counsel", title: "부모상담일지", desc: "상담내용과 총평 분리 작성", icon: Users, color: "bg-sky-100", text: "text-sky-700" },
+  { id: "growth", title: "발달평가", desc: "1학기 현재 모습, 2학기 변화 흐름", icon: BarChart3, color: "bg-indigo-100", text: "text-indigo-700" },
+];
 
-  <div class="section">🏠 메인 기능</div>
-  <div class="grid">
-    <div class="menu active" onclick="pick('보육일지',this)"><span>📘</span>보육일지</div>
-    <div class="menu" onclick="pick('키즈노트',this)"><span>💌</span>키즈노트</div>
-    <div class="menu" onclick="pick('관찰평가',this)"><span>🔎</span>관찰평가</div>
-    <div class="menu" onclick="pick('보육과정 운영평가',this)"><span>🏫</span>보육과정 운영평가</div>
-  </div>
+const AGE_GUIDE = {
+  "0세": "시선, 표정, 손짓, 감각 탐색과 반복 행동을 중심으로 놀이 의미를 읽습니다.",
+  "1세": "몸짓, 짧은 말, 반복 놀이, 또래에게 다가가는 모습을 중심으로 연결합니다.",
+  "2세": "자기표현, 또래 상호작용, 역할 모방, 놀이 확장을 중심으로 기록합니다.",
+  "3세": "놀이 속 의사표현, 상상놀이, 규칙 경험, 친구와의 관계를 중심으로 작성합니다.",
+  "4세": "협력, 문제해결, 상징놀이, 자신의 생각을 말로 조율하는 흐름을 반영합니다.",
+  "5세": "주도성, 협력적 놀이, 계획과 실행, 생각 나누기와 확장 경험을 담습니다.",
+};
 
-  <div class="section">🧸 보조 기능</div>
-  <div class="grid">
-    <div class="menu" onclick="pick('부모상담일지',this)"><span>👨‍👩‍👧</span>부모상담일지</div>
-    <div class="menu" onclick="pick('적응일지',this)"><span>🌱</span>적응일지</div>
-    <div class="menu" onclick="pick('놀이패널',this)"><span>🎨</span>놀이패널</div>
-    <div class="menu" onclick="pick('놀이계획',this)"><span>🧸</span>놀이계획 + 삐삑 추천✨</div>
-  </div>
+const AREA_TEXT = {
+  "신체운동·건강": "신체 움직임과 감각 탐색, 건강하고 안전한 생활 경험",
+  "의사소통": "말, 표정, 몸짓, 듣기와 표현을 통한 소통 경험",
+  "사회관계": "나와 다른 사람을 인식하고 또래와 관계 맺는 경험",
+  "예술경험": "색, 소리, 움직임, 꾸미기와 표현을 즐기는 경험",
+  "자연탐구": "주변 사물과 자연, 변화와 관계를 탐색하는 경험",
+};
 
-  <div class="section">✏️ 입력하기</div>
-
-  <div id="nameBox">
-    <input id="name" placeholder="아이 이름 (선택)">
-    <p class="small">※ 보육일지는 비우면 반 전체 기록, 입력하면 개인 중심 기록으로 작성돼요.</p>
-  </div>
-
-  <input id="topic" placeholder="놀이 주제 예: 봄꽃 놀이, 자동차 놀이, 감정놀이">
-
-  <textarea id="memo" placeholder="오늘 놀이·일상 메모를 짧게 적어주세요.
-예) 한율이 울면서 등원함. 자동차 좋아해서 제공하니 울음 줄고 놀이함."></textarea>
-
-  <div id="outdoorBox">
-    <label class="checkline">
-      <input type="checkbox" id="outdoorCheck" onchange="toggleOutdoor()">
-      🌳 바깥놀이 포함하기
-    </label>
-
-    <div id="outdoorDetail" class="hidden">
-      <select id="outdoorPlace">
-        <option>놀이터</option>
-        <option>산책</option>
-        <option>생태연못</option>
-        <option>마당</option>
-        <option>직접입력</option>
-      </select>
-      <input id="outdoorMemo" placeholder="바깥놀이 메모 예: 올챙이를 바라보며 가까이 다가감">
-      <label class="checkline">
-        <input type="checkbox" id="replaceCheck">
-        ☔ 대체놀이로 작성하기
-      </label>
-    </div>
-  </div>
-
-  <button onclick="make()">💜 작성하기</button>
-
-  <div id="result" class="result">작성 결과가 여기에 나와요 ✨</div>
-
-  <button class="copy" onclick="copyText()">복사하기</button>
-</div>
-
-<script>
-let selected="보육일지";
-
-function pick(type,el){
-  selected=type;
-  document.querySelectorAll(".menu").forEach(m=>m.classList.remove("active"));
-  el.classList.add("active");
-
-  document.getElementById("outdoorBox").style.display =
-    type==="보육일지" ? "block" : "none";
-
-  document.getElementById("nameBox").style.display =
-    type==="보육과정 운영평가" || type==="놀이패널" || type==="놀이계획" ? "none" : "block";
+function childType(age) {
+  return age === "0세" || age === "1세" || age === "2세" ? "영아" : "유아";
 }
 
-function toggleOutdoor(){
-  document.getElementById("outdoorDetail").classList.toggle(
-    "hidden",
-    !document.getElementById("outdoorCheck").checked
+function clean(value, fallback) {
+  return value && value.trim() ? value.trim() : fallback;
+}
+
+function makeDailyLog({ age, topic, line, childName }) {
+  const safeTopic = clean(topic, "오늘의 놀이");
+  const safeLine = clean(line, "놀이 상황을 한 줄로 입력해 주세요");
+  const child = childType(age);
+  const name = clean(childName, "만능이");
+
+  if (!line.trim()) {
+    return "주제와 한 줄 기록을 입력하면 놀이가 시작된 맥락부터 흐름, 교사의 지원, 배움읽기와 다음 지원계획까지 자연스럽게 이어진 보육일지가 작성됩니다.";
+  }
+
+  return `${safeTopic}에 대한 관심은 ${name}가 ${safeLine} 모습에서 시작되었다. 처음에는 익숙한 자료나 상황을 바라보며 조심스럽게 탐색하였고, 점차 자신의 방식으로 만져보거나 바라보거나 말과 몸짓으로 반응하며 놀이를 이어갔다. 교사는 ${child}가 보이는 관심을 따라가며 충분히 반복해볼 수 있도록 기다려주고, 필요한 자료와 언어적 상호작용을 더해 놀이가 자연스럽게 확장될 수 있도록 지원하였다. 교사의 지원 속에서 ${name}는 자신이 관심을 가진 대상을 다시 살펴보고 친구나 교사와 반응을 주고받으며 놀이에 조금 더 오래 머무는 모습을 보였다. 이 과정에서 ${child}는 자신의 경험과 감정을 표현하고 주변 사람이나 자료와 관계 맺으며 놀이 속에서 배움을 만들어갔다. 이는 2024 개정 표준보육과정의 놀이와 일상 중심 흐름 속에서 ${age} 발달 특성에 맞게 신체 움직임, 의사소통, 사회관계, 탐색 경험이 통합적으로 이루어진 모습으로 볼 수 있다. 앞으로도 ${name}가 오늘 보인 관심을 이어갈 수 있도록 관련 자료를 가까이 제공하고, 또래와 함께 살펴보거나 반복하여 시도해볼 수 있는 놀이환경을 마련해 지원하고자 한다.`;
+}
+
+function makeKidsNote({ age, topic, line, childName, greeting, ending }) {
+  const name = clean(childName, "만능이");
+  const safeTopic = clean(topic, "오늘의 놀이");
+  const safeLine = clean(line, "놀이에 관심을 보였어요");
+  const intro = clean(greeting, "안녕하세요. 오늘도 아이들의 작은 관심이 놀이로 이어지며 따뜻한 하루를 보냈습니다.");
+  const outro = clean(ending, "가정에서도 아이가 오늘의 이야기를 편안하게 떠올려볼 수 있도록 따뜻한 눈맞춤 나누어 주세요.");
+
+  return `${intro}\n\n오늘 ${name}는 ${safeTopic} 활동 속에서 ${safeLine} 모습을 보여주었어요. 처음에는 자료를 바라보며 관심을 보이다가 선생님과 함께 이야기를 나누고 직접 만져보며 놀이를 이어갔답니다. 놀이 중 ${name}가 보인 표정과 몸짓 안에는 익숙한 것에 대한 반가움과 스스로 탐색해보고 싶은 마음이 담겨 있었어요. 선생님은 ${name}가 충분히 바라보고 반복해볼 수 있도록 기다려주며, 필요한 순간 짧은 말로 반응을 더해 놀이가 자연스럽게 이어질 수 있도록 도왔습니다.\n\n${age} 발달 특성에 맞게 자신의 관심을 표현하고 주변 사람과 반응을 주고받는 모습이 참 예뻤답니다. 오늘의 경험이 ${name}에게 즐거운 기억으로 남을 수 있도록 내일도 비슷한 자료와 놀이를 이어가 보려고 합니다.\n\n${outro}`;
+}
+
+function makeOperation({ topic }) {
+  const safeTopic = clean(topic, "이번 달 놀이");
+  return `놀이환경\n${safeTopic}가 자연스럽게 이어질 수 있도록 영유아가 쉽게 바라보고 선택할 수 있는 위치에 관련 자료를 배치하였으며, 흥미가 지속되는 자료는 반복적으로 사용할 수 있도록 놀이 공간을 안정적으로 구성하였다.\n\n놀이시간\n영유아가 자신의 속도에 따라 충분히 탐색하고 반복할 수 있도록 놀이 시간을 여유 있게 운영하였으며, 관심이 이어지는 상황에서는 놀이가 중단되지 않도록 하루 일과 안에서 자연스럽게 연결하였다.\n\n안전교육\n놀이 중 이동, 자료 사용, 또래와의 거리 조절이 필요한 상황에서 안전한 방법을 짧고 구체적인 언어로 안내하며 영유아가 안전한 생활습관을 경험할 수 있도록 지원하였다.\n\n표준보육과정 영역경험\n${safeTopic}를 중심으로 신체 움직임, 의사소통, 사회관계, 예술적 표현, 자연탐구 경험이 영유아의 흥미에 따라 통합적으로 나타났으며, 모든 영역을 분리하여 지도하기보다 놀이 흐름 안에서 자연스럽게 경험할 수 있도록 하였다.\n\n놀이자원지원\n영유아가 보인 관심을 바탕으로 관련 자료를 추가하거나 위치를 조정하여 놀이가 확장될 수 있도록 지원하였고, 필요할 때는 교사의 언어적 상호작용과 함께 자료를 제안하여 다음 놀이로 이어질 수 있는 가능성을 마련하였다.`;
+}
+
+function makeObservation({ age, childName, line, area }) {
+  const name = clean(childName, "만능이");
+  const safeLine = clean(line, "놀이 상황에서 관심을 보임");
+  const child = childType(age);
+  const safeArea = clean(area, "사회관계");
+
+  return `관찰내용\n${name}는 놀이 상황에서 ${safeLine} 모습을 보였다. 처음에는 주변의 자료나 친구의 모습을 바라보며 관심을 나타내었고, 점차 자신의 방식으로 참여하며 놀이를 이어갔다. 교사의 말에 시선이나 표정, 몸짓으로 반응하거나 짧은 말로 자신의 생각을 표현하는 모습도 함께 나타났다.\n\n해석 및 배움읽기\n${name}의 모습은 ${child}가 자신의 관심을 바탕으로 주변 세계를 탐색하고 관계를 맺어가는 과정으로 볼 수 있다. 특히 ${safeArea} 영역에서 ${AREA_TEXT[safeArea] || "놀이 속 의미 있는 경험"}이 자연스럽게 드러났으며, 결과보다 놀이에 머무르고 반복하며 스스로 경험을 만들어가는 과정에 의미가 있었다.\n\n교사 지원\n교사는 ${name}가 보이는 관심을 따라가며 충분히 시도해볼 수 있도록 기다려주고, 필요한 순간 자료를 가까이 제공하거나 짧은 언어로 반응해주며 놀이가 이어질 수 있도록 지원하였다.\n\n다음 지원 방향\n앞으로도 ${name}가 관심을 보인 자료와 상황을 반복해서 경험할 수 있도록 놀이환경을 구성하고, 또래나 교사와 함께 반응을 주고받을 수 있는 기회를 자연스럽게 마련하고자 한다.`;
+}
+
+function makeCounsel({ childName, parentQuestion, home, school, teacherNote }) {
+  const name = clean(childName, "만능이");
+  const q = clean(parentQuestion, "부모님께서 궁금해하신 부분");
+  const h = clean(home, "가정에서 보이는 모습");
+  const s = clean(school, "어린이집에서 보이는 모습");
+  const t = clean(teacherNote, "교사의 관찰 내용");
+
+  return `상담내용\n부모님께서는 ${q}에 대해 궁금해하셨다. 가정에서는 ${h} 모습이 나타난다고 하였고, 어린이집에서는 ${name}가 ${s} 모습을 보이며 생활하고 있음을 함께 나누었다. 교사는 ${t}을 바탕으로 ${name}의 현재 모습을 설명하며, 먼저 강점과 긍정적인 변화를 중심으로 이야기하였다. 아직 발달 과정상 반복적인 경험과 기다림이 필요한 부분은 부담스럽지 않게 안내하고, 가정에서도 짧고 일관된 언어로 격려해주면 어린이집에서의 경험과 자연스럽게 연결될 수 있음을 공유하였다.\n\n총평\n${name}는 자신의 속도에 맞춰 생활과 놀이에 적응하며 관심 있는 상황에서는 적극적으로 반응하고 참여하는 모습을 보이고 있다. 현재 나타나는 모습은 발달 과정에서 자연스럽게 나타날 수 있는 부분이므로, 가정과 어린이집이 같은 방향으로 격려하며 안정적인 경험을 이어가는 것이 중요하다. 앞으로도 ${name}의 강점을 살리고 필요한 부분은 놀이와 일상 속에서 자연스럽게 지원하며 변화되는 모습을 지속적으로 살펴보고자 한다.`;
+}
+
+function makeGrowth({ semester, age, childName, area, first, support, change }) {
+  const name = clean(childName, "만능이");
+  const safeArea = clean(area, "사회관계");
+  const firstText = clean(first, "관심 있는 놀이에는 참여하나 반복적인 경험과 교사의 지원이 필요한 모습");
+  const supportText = clean(support, "교사가 놀이 속에서 기다려주고 짧은 언어와 자료 제공으로 지원한 경험");
+  const changeText = clean(change, "조금씩 스스로 시도하거나 또래와 함께 놀이에 머무는 모습");
+
+  if (semester === "1학기") {
+    return `${safeArea}\n${name}는 ${age} 발달 특성에 맞게 놀이와 일상 속에서 ${AREA_TEXT[safeArea] || "의미 있는 경험"}을 경험하고 있다. ${firstText}이 나타나며, 관심 있는 상황에서는 표정, 몸짓, 말로 자신의 생각을 표현하려는 모습이 보인다. 아직 충분한 반복과 안정적인 지원이 필요한 부분도 있어 교사는 ${supportText}을 통해 ${name}가 부담 없이 시도해볼 수 있도록 돕고 있다. 앞으로도 ${name}의 현재 발달 모습을 존중하며 놀이와 일상 속에서 자연스럽게 경험이 확장될 수 있도록 지원하고자 한다.`;
+  }
+
+  return `${safeArea}\n1학기에는 ${name}가 ${firstText}을 보이며 교사의 가까운 지원 속에서 놀이에 참여하는 모습이 많았다. 1학기 상담과 관찰 내용을 바탕으로 교사는 ${supportText}을 지속적으로 제공하였고, 2학기에는 ${changeText}이 조금씩 늘어나며 발달의 변화가 나타나고 있다. 특히 ${safeArea} 영역에서 ${AREA_TEXT[safeArea] || "놀이와 일상 속 경험"}이 이전보다 안정적으로 드러나며, 자신의 속도에 맞춰 경험을 이어가는 모습이 보인다. 앞으로도 1학기와 2학기의 변화 흐름을 살피며 ${name}가 강점을 바탕으로 필요한 부분을 자연스럽게 경험할 수 있도록 지원하고자 한다.`;
+}
+
+function CopyButton({ text }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <Button
+      onClick={() => {
+        navigator.clipboard?.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+      }}
+      className="rounded-2xl gap-2"
+    >
+      {copied ? <Check size={16} /> : <Copy size={16} />}
+      {copied ? "복사됨" : "복사하기"}
+    </Button>
   );
 }
 
-function subject(name){
-  return name ? name + "는" : "영아들은";
+function TextInput({ label, value, onChange, placeholder, textarea = false }) {
+  return (
+    <label className="space-y-2 block">
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      {textarea ? (
+        <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full min-h-[92px] rounded-2xl border border-slate-200 p-3 outline-none focus:ring-2 focus:ring-violet-200" />
+      ) : (
+        <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full rounded-2xl border border-slate-200 p-3 outline-none focus:ring-2 focus:ring-violet-200" />
+      )}
+    </label>
+  );
 }
 
-function possess(name){
-  return name ? name + "의" : "영아들의";
+function ResultBox({ title, text }) {
+  return (
+    <div className="rounded-3xl border border-violet-100 bg-violet-50/60 p-5 leading-8 whitespace-pre-wrap">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 font-bold text-violet-700"><Wand2 size={18} /> {title}</div>
+        <CopyButton text={text} />
+      </div>
+      {text}
+    </div>
+  );
 }
 
-function make(){
-  let name=document.getElementById("name").value.trim();
-  let topic=document.getElementById("topic").value.trim() || "오늘의 놀이";
-  let memo=document.getElementById("memo").value.trim() || "놀이 자료에 관심을 보이며 탐색하는 모습";
-  let who=subject(name);
-  let whose=possess(name);
-  let result="";
+export default function MannungiApp() {
+  const [active, setActive] = useState("daily");
+  const [age, setAge] = useState("2세");
+  const [topic, setTopic] = useState("우리가족");
+  const [oneLine, setOneLine] = useState("만능이가 가족사진을 보며 엄마를 찾아 웃음");
+  const [childName, setChildName] = useState("만능이");
+  const [greeting, setGreeting] = useState("안녕하세요. 오늘도 아이들의 작은 관심이 놀이로 이어지며 따뜻한 하루를 보냈습니다.");
+  const [ending, setEnding] = useState("가정에서도 아이가 오늘의 이야기를 편안하게 떠올려볼 수 있도록 따뜻한 눈맞춤 나누어 주세요.");
+  const [area, setArea] = useState("사회관계");
+  const [parentQuestion, setParentQuestion] = useState("또래와 함께 놀이할 때 어떤 모습인지 궁금해요");
+  const [home, setHome] = useState("가정에서는 자기 의견을 분명하게 표현하는 편");
+  const [school, setSchool] = useState("친구들의 놀이에 관심을 보이며 가까이 다가감");
+  const [teacherNote, setTeacherNote] = useState("관심 있는 놀이에는 적극적으로 참여하나 기다림과 조율 경험은 반복 지원이 필요함");
+  const [semester, setSemester] = useState("1학기");
+  const [first, setFirst] = useState("또래 놀이에 관심을 보이나 자신의 생각을 먼저 표현하는 모습");
+  const [support, setSupport] = useState("친구의 말을 기다려보고 역할을 나누어볼 수 있도록 교사가 놀이 중간에 짧게 안내함");
+  const [change, setChange] = useState("친구의 이야기를 듣고 역할을 나누어보며 함께 놀이를 이어가는 모습");
 
-  if(selected==="보육일지"){
-    result=`[보육일지]
+  const result = useMemo(() => {
+    if (active === "daily") return makeDailyLog({ age, topic, line: oneLine, childName });
+    if (active === "note") return makeKidsNote({ age, topic, line: oneLine, childName, greeting, ending });
+    if (active === "operation") return makeOperation({ topic });
+    if (active === "observe") return makeObservation({ age, childName, line: oneLine, area });
+    if (active === "counsel") return makeCounsel({ childName, parentQuestion, home, school, teacherNote });
+    return makeGrowth({ semester, age, childName, area, first, support, change });
+  }, [active, age, topic, oneLine, childName, greeting, ending, area, parentQuestion, home, school, teacherNote, semester, first, support, change]);
 
-1. 놀이가 왜 시작되었는지
-${topic}와 관련된 자료와 상황에 관심을 보이며 놀이가 자연스럽게 시작되었다. ${who} ${memo} 모습을 보이며 놀이에 관심을 나타냈다.
+  const current = MENU.find((m) => m.id === active) || MENU[0];
+  const ActiveIcon = current.icon;
 
-2. 놀이 흐름
-처음에는 놀이 자료를 바라보거나 손으로 만져보며 탐색을 시작하였고, 점차 반복적으로 시도하며 놀이에 머무르는 모습을 보였다. 놀이가 이어지는 과정에서 주변 친구의 놀이를 살펴보거나 교사의 반응에 따라 다시 놀이에 참여하는 모습도 나타났다.
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-pink-50 p-4 md:p-8 text-slate-800">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] bg-white/85 p-6 shadow-sm border border-violet-100">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-medium text-violet-600"><Sparkles size={18} /> 2024 개정 표준보육과정 · 개정평가제 흐름 기반</div>
+              <h1 className="mt-2 text-3xl md:text-4xl font-bold tracking-tight">만능이앱</h1>
+              <p className="mt-2 text-slate-600">입력은 최소로, 기록은 자세하고 부드럽게. 놀이·배움·평가가 하나의 흐름으로 이어지도록 돕는 교사용 기록 도우미</p>
+            </div>
+            <div className="rounded-3xl bg-violet-100 px-5 py-4 text-violet-800 text-sm">
+              <b>핵심 원칙</b><br />한 줄 입력 → 놀이 시작 · 흐름 · 지원 · 배움읽기 · 다음 계획 자동 연결
+            </div>
+          </div>
+        </motion.div>
 
-3. 영아 관찰 + 교사 상호작용
-${who} ${memo} 과정에서 시선, 표정, 몸짓, 소리 등 자신만의 방식으로 흥미와 요구를 표현하였다. 교사는 ${whose} 관심이 머무는 지점을 살펴보고 놀이 상황을 짧은 언어로 표현해주며 상호작용하였다.
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1 space-y-3">
+            {MENU.map((item) => {
+              const Icon = item.icon;
+              const selected = active === item.id;
+              return (
+                <button key={item.id} onClick={() => setActive(item.id)} className={`w-full text-left rounded-3xl border p-4 transition shadow-sm ${selected ? "bg-violet-600 text-white border-violet-600" : "bg-white border-slate-100 hover:border-violet-200"}`}>
+                  <div className="flex gap-3 items-center">
+                    <div className={`rounded-2xl p-3 ${selected ? "bg-white/20" : item.color}`}><Icon size={22} /></div>
+                    <div>
+                      <div className="font-bold">{item.title}</div>
+                      <div className={`text-sm ${selected ? "text-white/80" : "text-slate-500"}`}>{item.desc}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+            <div className="rounded-3xl bg-white p-4 border border-slate-100 text-sm text-slate-600 leading-6">
+              <div className="font-bold text-slate-800 flex items-center gap-2 mb-1"><Home size={16} /> 붙여넣는 곳</div>
+              ChatGPT에서 만든 React 코드를 저장한 뒤, 웹앱 편집 화면의 App.jsx 또는 src/App.jsx 전체 내용에 붙여넣으면 됩니다.
+            </div>
+          </div>
 
-4. 교사 지원 + 확장
-교사는 ${whose} 관심이 이어질 수 있도록 관련 자료를 가까이 제공하고, 반복적으로 탐색할 수 있도록 충분한 시간을 제공하였다. 이를 통해 영아가 안정적으로 놀이에 참여하며 즐겁게 활동을 이어가는 모습을 보였다.
+          <Card className="lg:col-span-2 rounded-[2rem] border-violet-100 shadow-sm bg-white/90">
+            <CardContent className="p-6 space-y-5">
+              <div className="flex items-center gap-3">
+                <div className={`rounded-2xl p-3 ${current.color} ${current.text}`}><ActiveIcon size={24} /></div>
+                <div>
+                  <h2 className="text-2xl font-bold">{current.title}</h2>
+                  <p className="text-sm text-slate-500">선생님이 쓰는 실제 기록 흐름에 맞춰 구성했어요.</p>
+                </div>
+              </div>
 
-5. 배움읽기 + 지원
-${who} 놀이를 통해 주변 사물과 상황에 관심을 가지고 자신의 방식으로 탐색하며 표현하는 경험을 하였다. 이는 영아가 놀이 속에서 의사소통, 사회관계, 자연탐구, 신체 움직임 등 다양한 경험을 통합적으로 이어가는 과정으로 볼 수 있다. 교사는 영아의 자발적인 시도와 반복 탐색이 이어질 수 있도록 자료와 상호작용을 지속적으로 지원하였다.
+              <div className="grid md:grid-cols-3 gap-3">
+                <label className="space-y-2"><span className="text-sm font-semibold">연령</span><select value={age} onChange={(e) => setAge(e.target.value)} className="w-full rounded-2xl border border-slate-200 p-3 bg-white">{Object.keys(AGE_GUIDE).map((a) => <option key={a}>{a}</option>)}</select></label>
+                <TextInput label="주제" value={topic} onChange={setTopic} placeholder="예: 우리가족" />
+                <TextInput label="아이 이름" value={childName} onChange={setChildName} placeholder="예: 만능이" />
+              </div>
 
-6. 놀이 지원 계획
-다음 놀이에서는 오늘 나타난 관심을 바탕으로 ${topic}와 관련된 자료를 추가 제공하고, 영아가 스스로 선택하고 반복하며 놀이를 확장할 수 있도록 지원할 예정이다.`;
+              {(active === "daily" || active === "note" || active === "observe") && (
+                <TextInput label="한 줄 기록" value={oneLine} onChange={setOneLine} placeholder="예: 가족사진을 보며 엄마를 찾아 웃음" textarea />
+              )}
 
-    if(document.getElementById("outdoorCheck").checked){
-      let place=document.getElementById("outdoorPlace").value;
-      let outdoor=document.getElementById("outdoorMemo").value.trim() || "주변 환경을 살펴보며 관심을 보임";
-      let replace=document.getElementById("replaceCheck").checked;
+              {active === "note" && (
+                <div className="grid md:grid-cols-2 gap-3">
+                  <TextInput label="인사말" value={greeting} onChange={setGreeting} textarea />
+                  <TextInput label="끝인사" value={ending} onChange={setEnding} textarea />
+                </div>
+              )}
 
-      result+=`
+              {(active === "observe" || active === "growth") && (
+                <label className="space-y-2 block"><span className="text-sm font-semibold">표준보육과정 영역</span><select value={area} onChange={(e) => setArea(e.target.value)} className="w-full rounded-2xl border border-slate-200 p-3 bg-white">{Object.keys(AREA_TEXT).map((a) => <option key={a}>{a}</option>)}</select></label>
+              )}
 
-7. ${replace ? "대체놀이" : "바깥놀이"}
-${replace ? "바깥놀이가 어려운 상황을 고려하여 실내에서 관련 경험이 이어질 수 있도록 대체놀이를 제공하였다." : place+"에서 바깥놀이가 이루어졌으며, 영아들은 "+outdoor+" 모습을 보였다."}
+              {active === "counsel" && (
+                <div className="grid md:grid-cols-2 gap-3">
+                  <TextInput label="부모님 사전질문" value={parentQuestion} onChange={setParentQuestion} textarea />
+                  <TextInput label="가정 모습" value={home} onChange={setHome} textarea />
+                  <TextInput label="어린이집 모습" value={school} onChange={setSchool} textarea />
+                  <TextInput label="교사 관찰" value={teacherNote} onChange={setTeacherNote} textarea />
+                </div>
+              )}
 
-${replace ? "영아가 바깥에서 경험할 수 있는 자연물과 움직임에 대한 관심을 실내 놀이로 연결하여 관련 자료를 제공하였고, 영아들은 자신의 방식으로 탐색하며 즐겁게 놀이에 참여하는 모습을 보였다." : "교사는 영아가 주변 자연과 환경을 안전하게 탐색할 수 있도록 가까이에서 살피며 언어적 상호작용을 제공하였다."}`;
-    }
-  }
+              {active === "growth" && (
+                <div className="space-y-3">
+                  <label className="space-y-2 block"><span className="text-sm font-semibold">학기</span><select value={semester} onChange={(e) => setSemester(e.target.value)} className="w-full rounded-2xl border border-slate-200 p-3 bg-white"><option>1학기</option><option>2학기</option></select></label>
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <TextInput label="1학기 모습 / 현재 모습" value={first} onChange={setFirst} textarea />
+                    <TextInput label="상담·교사 지원" value={support} onChange={setSupport} textarea />
+                    <TextInput label="2학기 변화" value={change} onChange={setChange} textarea />
+                  </div>
+                </div>
+              )}
 
-  else if(selected==="키즈노트"){
-    result=`안녕하세요.
-
-오늘 ${name||"우리 아이"}는 ${topic} 놀이 속에서 ${memo} 모습을 보였어요. 처음에는 주변을 살펴보며 관심을 보이다가 점차 놀이 자료를 만져보거나 반복해서 시도하며 즐겁게 참여했답니다.
-
-교사는 아이가 관심을 보이는 순간을 따라가며 따뜻한 말로 반응해주었고, 아이도 편안한 모습으로 놀이를 이어갔어요.
-
-가정에서도 오늘 보인 관심을 함께 이야기해주시면 놀이 경험이 더욱 풍성하게 이어질 것 같습니다.`;
-  }
-
-  else if(selected==="관찰평가"){
-    result=`[관찰평가]
-
-${name||"영아"}는 ${topic}와 관련된 놀이와 일상 속에서 ${memo} 모습을 반복적으로 보였다. 관심 있는 자료를 바라보거나 손으로 만져보며 자신의 방식으로 탐색하였고, 교사와의 상호작용 속에서 놀이에 다시 참여하는 모습도 나타났다.
-
-이전보다 일과 흐름에 안정적으로 참여하는 시간이 늘어나고 있으며, 자신의 관심과 감정을 표정, 몸짓, 짧은 언어 등으로 표현하려는 모습을 보였다. 앞으로도 아이의 관심이 이어질 수 있도록 반복 경험과 정서적 지원을 제공하고자 한다.`;
-  }
-
-  else if(selected==="보육과정 운영평가"){
-    result=`[보육과정 운영평가]
-
-${topic}를 중심으로 영아들이 ${memo} 모습을 보이며 놀이에 참여하였다. 영아의 흥미를 반영한 자료 제공을 통해 자발적인 탐색과 반복 놀이가 이루어졌다.
-
-놀이 과정에서 영아들은 자신의 관심에 따라 자료를 선택하고 탐색하였으며, 또래의 놀이를 바라보거나 교사의 반응에 응답하며 자연스럽게 상호작용하는 모습을 보였다.
-
-교사는 영아가 쉽게 접근할 수 있는 위치에 놀이 자료를 제공하고, 자료의 수와 배치를 조정하며 놀이가 이어질 수 있도록 환경을 구성하였다. 다음 운영에서는 오늘 나타난 관심을 바탕으로 관련 자료를 추가 제공하고, 영아의 표현과 상호작용이 확장될 수 있도록 지원할 예정이다.`;
-  }
-
-  else if(selected==="부모상담일지"){
-    result=`[부모상담일지]
-
-${name||"영아"}는 원에서 ${topic}와 관련하여 ${memo} 모습을 보이고 있다. 관심 있는 자료를 스스로 선택하거나 반복적으로 탐색하려는 모습이 있으며, 교사의 따뜻한 반응이 이어질 때 더욱 편안하게 놀이에 참여한다.
-
-강점으로는 자신의 관심을 다양한 방식으로 표현하려는 모습이 있으며, 또래나 교사와의 상호작용 속에서 놀이 경험을 확장해가는 모습이 있다. 가정에서도 아이가 관심을 보이는 장면을 충분히 기다려주시고 짧은 말로 행동과 감정을 읽어주시면 표현이 더욱 자연스럽게 이어질 수 있다.`;
-  }
-
-  else if(selected==="적응일지"){
-    result=`[적응일지]
-
-${name||"영아"}는 새로운 환경과 일과 속에서 ${memo} 모습을 보였다. 처음에는 주변을 살피거나 교사 가까이 머무르려는 모습이 있었으나, 익숙한 놀이와 교사의 안정적인 반응이 이어지자 점차 놀이에 참여하는 모습을 보였다.
-
-교사는 아이가 안정감을 느낄 수 있도록 가까이에서 반응해주고, 선호하는 놀이나 익숙한 자료를 제공하여 자연스럽게 일과에 참여할 수 있도록 지원하였다. 이후 아이는 놀이에 머무르며 교실 생활에 조금씩 적응해가는 모습을 보였다.`;
-  }
-
-  else if(selected==="놀이패널"){
-    result=`[놀이패널]
-
-📸 놀이 장면
-${topic} 놀이 중 영아들은 ${memo}
-
-👀 영아의 관심
-영아들은 놀이 자료를 바라보고 손으로 만져보며 관심을 표현하였다.
-
-🌱 배움읽기
-놀이를 통해 주변 사물과 상황에 관심을 가지고 자신의 방식으로 탐색하며 표현하는 경험을 하였다.
-
-💜 교사 지원
-교사는 영아의 관심을 따라가며 자료를 가까이 제공하고 짧은 언어로 반응하며 놀이가 이어질 수 있도록 지원하였다.`;
-  }
-
-  else if(selected==="놀이계획"){
-    result=`[놀이계획 + 삐삑 추천✨]
-
-놀이 주제: ${topic}
-오늘 관찰된 관심: ${memo}
-
-내일 연계놀이
-1. ${topic} 관련 사진 자료를 보며 이야기 나누기
-2. 감각 자료를 추가해 만지고 느껴보기
-3. 역할놀이 소품으로 경험을 표현해보기
-4. 또래와 함께 반복 놀이 이어가기
-
-필요한 교구
-- 관련 사진 또는 그림 자료
-- 감각 재료
-- 바구니, 천, 소품 등 역할놀이 자료
-- 영아가 안전하게 만질 수 있는 실물 자료
-
-교사 지원
-영아가 보인 관심을 먼저 관찰하고 짧고 따뜻한 언어로 반응한다. 놀이가 끊기지 않도록 자료를 가까이 제공하고, 영아의 시도와 반복을 충분히 기다려 준다.`;
-  }
-
-  document.getElementById("result").innerText=result;
+              <div className="rounded-3xl bg-slate-50 p-4 text-sm text-slate-600 flex gap-2"><Baby size={18} /> {AGE_GUIDE[age]}</div>
+              <ResultBox title="자동 작성 결과" text={result} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-function copyText(){
-  navigator.clipboard.writeText(document.getElementById("result").innerText);
-  alert("복사 완료 💜");
-}
-
-pick("보육일지",document.querySelector(".menu"));
-</script>
-</body>
-</html>
